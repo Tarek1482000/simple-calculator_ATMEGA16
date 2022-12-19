@@ -1,0 +1,10 @@
+Simple Calculator using (Atmega32 - 8MHZ ) and (LCD 16x2)   and (Keypad 4x4)
+
+using drivers:
+GPIO
+Keypad
+LCD
+calc
+
+
+calc => is the driver of doing calculation
