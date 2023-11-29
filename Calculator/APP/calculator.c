@@ -13,7 +13,7 @@ int main(void)
 
 	start(); //Start interface
 
-	while(1)
+	for(;;)
 	{
 		Do_Caclulations();//Start program (Calculations)
 	}

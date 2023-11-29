@@ -1,14 +1,3 @@
-/******************************************************************************
- *
- * File Name: calc.c
- *
- * Description: Source file for the calculator driver
- *
- * Author: Tarek Ahmed
- *
- *******************************************************************************/
-
-
 #include "calc.h"
 #include "lcd.h"
 #include "keypad.h"
@@ -16,6 +5,7 @@
 #include "../mcu_config/private.h"
 #include <stdlib.h>
 #include <util/delay.h>
+#include <math.h>
 
 
 uint8   key=0,   //Store Keypad value
@@ -64,6 +54,7 @@ void start(void)
  */
 void First_NUM(void)
 {
+	uint8 temp = 0;
 	num1_counter=0;//start from digit 1
 	while(1)
 	{
@@ -78,6 +69,17 @@ void First_NUM(void)
 			key = rand() % 10;
 		}
 
+		if( key == '/' )
+		{
+			temp=KEYPAD_getPressedKey();
+			_delay_ms(200);
+		}
+
+		if(temp == '/' )
+		{
+			key = 'R';
+		}
+
 		/*
 		 * Break loop when user complete entering first number and operation
 		 */
@@ -88,6 +90,12 @@ void First_NUM(void)
 			break;
 		}
 
+		if( key == 'R')
+		{
+			opration=key;
+			LCD_displayString("Root");
+			break;
+		}
 
 		/*
 		 * Store all digits of first number and display number on LCD
@@ -300,6 +308,39 @@ void calc_div(float32 *first_num,float32*second_num,uint8 digit1,uint8 digit2)
 
 /*
  * Description :
+ * Concatenate all digits of two number then display result of multi on LCD
+ */
+void calc_ROOT(float32 *first_num,uint8 digit1)
+{
+	float32 num1=first_num[0];
+
+	/*
+	 *  Concatenate all digits of first number
+	 */
+	for(uint8 counter=1;counter<digit1;counter++)
+	{
+		num1 = num1*10 +first_num[counter];
+	}
+	/*
+	 *  Concatenate all digits of second number
+	 */
+
+	/*
+	 *  Display result on LCD and wait until enter c
+	 */
+	LCD_moveCursor(1, 0);
+	LCD_floatToString(sqrtf(num1));
+	while(key != 'c')
+	{
+		key=KEYPAD_getPressedKey();
+		_delay_ms(200);
+	}
+	LCD_clearScreen();
+}
+
+
+/*
+ * Description :
  *  Get two number and operation and do operation and display it on screen
  */
 void Do_Caclulations(void)
@@ -310,10 +351,14 @@ void Do_Caclulations(void)
 	 */
 	First_NUM();
 
-	/*
-	 * Get first number and operation
-	 */
-	Second_NUM();
+	if(opration != 'R')
+	{
+		/*
+		 * Get Second number
+		 */
+		Second_NUM();
+	}
+
 
 	/*
 	 * Do operation calculation
@@ -331,6 +376,11 @@ void Do_Caclulations(void)
 		break;
 	case '/':
 		calc_div(number1, number2, num1_counter, num2_counter);
+		break;
+	case 'R':
+		calc_ROOT(number1, num1_counter);
+		break;
+	default:
 		break;
 	}
 

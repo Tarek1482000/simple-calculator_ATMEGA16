@@ -63,7 +63,7 @@ main-build: Calculator.elf secondary-outputs
 Calculator.elf: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: AVR C Linker'
-	avr-gcc -Wl,-Map,Calculator.map -mmcu=atmega16 -o "Calculator.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	avr-gcc -Wl,-Map,Calculator.map -mmcu=atmega32 -o "Calculator.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -81,7 +81,7 @@ Calculator.hex: Calculator.elf makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 
 sizedummy: Calculator.elf makefile objects.mk $(OPTIONAL_TOOL_DEPS)
 	@echo 'Invoking: Print Size'
-	-avr-size --format=avr --mcu=atmega16 Calculator.elf
+	-avr-size --format=avr --mcu=atmega32 Calculator.elf
 	@echo 'Finished building: $@'
 	@echo ' '
 
